@@ -8,9 +8,9 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class ItemsMapperTest {
     @Test
     public void findByIdTest(){
-        ApplicationContext ApplicationContext = new ClassPathXmlApplicationContext("applicationContext.xml");
-        ItemsMapper itemsMapper = ApplicationContext.getBean(ItemsMapper.class);
+        ClassPathXmlApplicationContext ca = new ClassPathXmlApplicationContext("applicationContext.xml");
+        ItemsMapper itemsMapper = ca.getBean(ItemsMapper.class);
         Items items = itemsMapper.findById(1);
-        System.out.println("items = " + items.getName());
+        System.out.println("items = " + items);
     }
 }

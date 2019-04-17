@@ -17,6 +17,8 @@
 			    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
     <!--dao层配置文件开始-->
     <!--配置连接池-->
+
+
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql:///mydb1"/>
@@ -28,11 +30,51 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <!--扫描pojo包，给包下所有pojo对象起别名-->
+        <property name="typeAliasesPackage" value="com.xixi.domain"/>
     </bean>
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.xixi.dao"></property>
      </bean>
 
-    <context:component-scan base-package="com.xixi"></context:component-scan>
+    <bean name="user" class="com.xixi.domain.User"></bean>
+    <!--创建前的init方法，创建后的destory方法 -->
+    <!--静态方法创建-->
+    <bean name="user1" class="com.xixi.domain.UserFactory" factory-method="createUser" ></bean>
+    <!--实例工厂-->
+    <bean name="userfactory" class="com.xixi.domain.UserFactory"></bean>
 
+    <bean name="user2" factory-bean="userfactory" factory-method="createUser2"></bean>
+
+    <!-- set方法注入，有getset方法的才能引用property-->
+    <bean name="user3" class="com.xixi.domain.User">
+        <property name="name" value="xixi"/>
+        <property name="age" value="13"/>
+        <property name="car" ref="car"/>
+    </bean>
+
+    <bean name="car" class="com.xixi.domain.Car">
+        <property name="name" value="benz"/>
+        <property name="color" value="red"/>
+    </bean>
+    <!-- 构造函数-->
+    <bean name="user4" class="com.xixi.domain.User1">
+        <constructor-arg name="name" value="haha"/>
+        <constructor-arg name="age" value="14"/>
+        <constructor-arg name="car" ref="car1"/>
+    </bean>
+    <bean name="car1" class="com.xixi.domain.Car1">
+        <constructor-arg name="color" index="1" value="yellow"/>
+        <constructor-arg name="name" value="bmw"/>
+    </bean>
+
+    <bean name="user5" class="com.xixi.domain.User">
+        <property name="name" value="#{user3.name}"/>
+        <property name="age" value="#{user3.age}"/>
+        <!--表达式，属于get方法-->
+    </bean>
+    <context:component-scan base-package="com.xixi">
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+                                <!--每个模块管自己的注解,这里是spring框架的扫描注解-->
+    </context:component-scan>
+    
 </beans>
